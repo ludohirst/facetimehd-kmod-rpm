@@ -1,0 +1,40 @@
+From 164729caf85e8722c6f3191c513d9ea92e7fcfa3 Mon Sep 17 00:00:00 2001
+From: Viorel Cernateanu <vrilutza@gmail.com>
+Date: Tue, 29 Sep 2026 06:43:46 +0300
+Subject: [PATCH] isp: declare the calibration files the driver can ask for
+
+Only firmware.bin is declared with MODULE_FIRMWARE. An initramfs
+generator copies the firmware a module declares, so a driver loaded
+before the root filesystem is mounted finds firmware.bin and nothing
+else, and the set file request fails with -ENOENT even though the file
+is installed.
+
+Declare the eleven set files as well, so they travel with the module.
+
+Signed-off-by: Viorel Cernateanu <vrilutza@gmail.com>
+---
+ fthd_drv.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/fthd_drv.c b/fthd_drv.c
+index 9194516..8db835b 100644
+--- a/fthd_drv.c
++++ b/fthd_drv.c
+@@ -570,6 +570,17 @@ static struct pci_driver fthd_pci_driver = {
+ module_pci_driver(fthd_pci_driver);
+ 
+ MODULE_FIRMWARE("facetimehd/firmware.bin");
++MODULE_FIRMWARE("facetimehd/1222_01XX.dat");
++MODULE_FIRMWARE("facetimehd/1571_01XX.dat");
++MODULE_FIRMWARE("facetimehd/1575_01XX.dat");
++MODULE_FIRMWARE("facetimehd/1671_01XX.dat");
++MODULE_FIRMWARE("facetimehd/1674_01XX.dat");
++MODULE_FIRMWARE("facetimehd/1675_01XX.dat");
++MODULE_FIRMWARE("facetimehd/1771_01XX.dat");
++MODULE_FIRMWARE("facetimehd/1871_01XX.dat");
++MODULE_FIRMWARE("facetimehd/1874_01XX.dat");
++MODULE_FIRMWARE("facetimehd/8221_01XX.dat");
++MODULE_FIRMWARE("facetimehd/9112_01XX.dat");
+ MODULE_DEVICE_TABLE(pci, fthd_pci_id_table);
+ MODULE_AUTHOR("Patrik Jakobsson <patrik.r.jakobsson@gmail.com>");
+ MODULE_DESCRIPTION("FacetimeHD camera driver");

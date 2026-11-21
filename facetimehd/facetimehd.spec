@@ -10,7 +10,7 @@
 
 Name:       facetimehd
 Version:    %{tag}
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Kernel module for FacetimeHD webcam
 License:    GPL-2.0-only
 URL:        %{forgeurl}
@@ -32,11 +32,9 @@ Macbooks.
 %forgeautosetup
 
 %install
-install -d -m 0755 %{buildroot}%{_sysconfdir}/modules-load.d
-install -p -m 0644 /dev/stdin %{buildroot}%{_sysconfdir}/modules-load.d/facetimehd.conf <<'EOF'
-# Load facetimehd.ko at boot
-facetimehd
-EOF
+# The driver has a PCI alias, so udev loads it when the camera is discovered.
+# A static modules-load.d entry also pulls the camera into host-only dracut
+# images, although it is not needed to mount the root filesystem.
 
 # modprobe.d content comes from upstream's dkms.conf (MODULES_CONF entries, currently
 # "blacklist bdc_pci"), so it follows upstream; the build fails if none are found.
@@ -51,10 +49,12 @@ chmod 0644 %{buildroot}%{_sysconfdir}/modprobe.d/facetimehd.conf
 %files
 %license LICENSE
 %doc README.md
-%config(noreplace) %{_sysconfdir}/modules-load.d/facetimehd.conf
 %config(noreplace) %{_sysconfdir}/modprobe.d/facetimehd.conf
 
 %changelog
+* Sat Nov 21 2026 Ludo Hirst <ludo.hirst@bristol.ac.uk> - 0.7.2-2
+- Rely on PCI discovery instead of forcing the camera into early boot
+
 * Sun Oct 25 2026 github-actions <noreply@github.com> - 0.7.2-1
 - Update to 0.7.2 release
 

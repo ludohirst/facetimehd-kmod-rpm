@@ -17,11 +17,16 @@
 
 Name:       %{srcname}-kmod
 Version:    %{tag}
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Kernel module for FacetimeHD webcam
 License:    GPL-2.0-only
 URL:        %{forgeurl}
 Source:     %{forgesource}
+# Upstream fixes not included in the 0.7.2 release.
+# https://github.com/patjak/facetimehd/pull/337
+Patch0:     0001-safe-suspend.patch
+# https://github.com/patjak/facetimehd/pull/354
+Patch1:     0002-calibration-firmware.patch
 
 Requires: facetimehd-firmware
 # kernel bug? # "Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y"
@@ -53,7 +58,7 @@ Macbooks.
 # print kmodtool output for debugging purposes:
 kmodtool --target %{_target_cpu} --kmodname %{kmodname} %{?buildforkernels:--%{buildforkernels}} %{?kernels:--for-kernels "%{?kernels}"} 2>/dev/null | grep -v kmod-common
 
-%forgeautosetup
+%forgeautosetup -p1
 
 pushd %{_builddir}
 
@@ -92,6 +97,10 @@ make -C "${kdir}" M="${PWD}" modules
 %endif
 
 %changelog
+* Sat Nov 21 2026 Ludo Hirst <ludo.hirst@bristol.ac.uk> - 0.7.2-2
+- Backport upstream suspend teardown and resume error handling fixes
+- Declare sensor calibration firmware for initramfs generators
+
 * Sun Oct 25 2026 github-actions <noreply@github.com> - 0.7.2-1
 - Update to 0.7.2 release
 
