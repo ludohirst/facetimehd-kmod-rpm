@@ -17,7 +17,7 @@
 
 Name:       %{srcname}-kmod
 Version:    %{tag}
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Kernel module for FacetimeHD webcam
 License:    GPL-2.0-only
 URL:        %{forgeurl}
@@ -27,6 +27,8 @@ Source:     %{forgesource}
 Patch0:     0001-safe-suspend.patch
 # https://github.com/patjak/facetimehd/pull/354
 Patch1:     0002-calibration-firmware.patch
+# Local fix for unbounded IRQ and ring processing in 0.7.2.
+Patch2:     0003-bound-irq-work.patch
 
 Requires: facetimehd-firmware
 # kernel bug? # "Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y"
@@ -97,6 +99,9 @@ make -C "${kdir}" M="${PWD}" modules
 %endif
 
 %changelog
+* Sat Nov 28 2026 Ludo Hirst <ludo.hirst@bristol.ac.uk> - 0.7.2-3
+- Bound firmware interrupt work and mask the camera on a stuck interrupt
+
 * Sat Nov 21 2026 Ludo Hirst <ludo.hirst@bristol.ac.uk> - 0.7.2-2
 - Backport upstream suspend teardown and resume error handling fixes
 - Declare sensor calibration firmware for initramfs generators
